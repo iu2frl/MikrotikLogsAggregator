@@ -25,15 +25,17 @@ MKT_LOGS_PORT=10514                        # UDP port for MikroTik logs
 ## Installation
 
 1. Clone the repository:
-   ```bash
-   git clone <repository-url>
-   cd MikrotikLogsAggregator
-   ```
+
+```bash
+git clone <repository-url>
+cd MikrotikLogsAggregator
+```
 
 2. Install the required dependencies:
-   ```bash
-   pip install -r requirements.txt
-   ```
+
+```bash
+pip install -r requirements.txt
+```
 
 3. Create a `.env` file in the project directory and add the environment variables as shown above.
 
@@ -42,9 +44,10 @@ MKT_LOGS_PORT=10514                        # UDP port for MikroTik logs
 ### Using Python
 
 1. Start the application:
-   ```bash
-   python3 main.py
-   ```
+
+```bash
+python3 main.py
+```
 
 2. The application will:
    - Start a UDP server to listen for MikroTik logs.
@@ -57,50 +60,56 @@ You can both pull the pre-built images from `ghcr.io/iu2frl/mikrotik-telegram:la
 #### Build the Docker Image
 
 1. Build the Docker image locally:
-   ```bash
-   docker build -t mikrotik-telegram .
-   ```
+
+```bash
+docker build -t mikrotik-telegram .
+```
 
 #### Run the Docker Container
 
 1. Run the container using `docker run`:
-   ```bash
-   docker run -d \
-     --name mikrotik-telegram \
-     --env-file .env \
-     -p 10514:10514/udp \
-     mikrotik-telegram
-   ```
 
-   - `--env-file .env`: Passes the environment variables from the .env file.
-   - `-p 10514:10514/udp`: Maps the UDP port for MikroTik logs.
+```bash
+docker run -d \
+    --name mikrotik-telegram \
+    --env-file .env \
+    -p 10514:10514/udp \
+    mikrotik-telegram
+```
+
+Where:
+
+- `--env-file .env`: Passes the environment variables from the .env file.
+- `-p 10514:10514/udp`: Maps the UDP port for MikroTik logs.
 
 #### Using Docker Compose
 
 1. Create a `docker-compose.yml` file with the following content:
 
-   ```yaml
-   version: "3.8"
+```yaml
+version: "3.8"
 
-   services:
-     mikrotik-telegram:
-       image: mikrotik-telegram:latest
-       container_name: mikrotik-telegram
-       env_file: .env
-       ports:
-         - "10514:10514/udp"
-       restart: unless-stopped
-   ```
+services:
+    mikrotik-telegram:
+    image: mikrotik-telegram:latest
+    container_name: mikrotik-telegram
+    env_file: .env
+    ports:
+        - "10514:10514/udp"
+    restart: unless-stopped
+```
 
 2. Start the container using Docker Compose:
-   ```bash
-   docker-compose up -d
-   ```
+
+```bash
+docker-compose up -d
+```
 
 3. To stop the container:
-   ```bash
-   docker-compose down
-   ```
+
+```bash
+docker-compose down
+```
 
 ## Telegram Bot Commands
 
@@ -109,6 +118,22 @@ The Telegram bot supports the following commands:
 - `/start`: Sends a welcome message.
 - `/help`: Displays a list of available commands.
 - `/status`: Retrieves the status of the MikroTik device.
+
+## Configuring the Mikrotik device
+
+Configure the Mikrotik device as follows:
+
+```mikrotik
+/system logging action
+add cef-event-delimiter="" name=Docker remote=10.40.0.64 remote-log-format=cef remote-port=10514 syslog-time-format=iso8601 target=remote
+/system logging
+add action=Docker topics=info
+add action=Docker topics=warning
+add action=Docker topics=error
+add action=Docker topics=critical
+```
+
+Make sure to replace the `remote` address with the address of the machine where the script (or the container) is running.
 
 ## Logging
 
@@ -129,15 +154,17 @@ To stop the application, press `Ctrl+C`. This will gracefully shut down the Tele
 If running in Docker, use the following commands:
 
 - For `docker run`:
-  ```bash
-  docker stop mikrotik-telegram
-  docker rm mikrotik-telegram
-  ```
+
+```bash
+docker stop mikrotik-telegram
+docker rm mikrotik-telegram
+```
 
 - For Docker Compose:
-  ```bash
-  docker-compose down
-  ```
+
+```bash
+docker-compose down
+```
 
 ## Troubleshooting
 
