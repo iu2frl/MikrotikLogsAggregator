@@ -55,14 +55,14 @@ python3 main.py
 
 ### Using Docker
 
-You can both pull the pre-built images from `ghcr.io/iu2frl/mikrotik-telegram:latest` or build your own image
+You can both pull the pre-built images from `ghcr.io/iu2frl/mikrotiklogsaggregator:latest` or build your own image
 
 #### Build the Docker Image
 
 1. Build the Docker image locally:
 
 ```bash
-docker build -t mikrotik-telegram .
+docker build -t mikrotiklogsaggregator .
 ```
 
 #### Run the Docker Container
@@ -74,7 +74,7 @@ docker run -d \
     --name mikrotik-telegram \
     --env-file .env \
     -p 10514:10514/udp \
-    mikrotik-telegram
+    mikrotiklogsaggregator
 ```
 
 Where:
@@ -91,7 +91,7 @@ version: "3.8"
 
 services:
     mikrotik-telegram:
-    image: mikrotik-telegram:latest
+    image: mikrotiklogsaggregator
     container_name: mikrotik-telegram
     env_file: .env
     ports:

@@ -40,4 +40,4 @@ jobs:
           file: ./Dockerfile
           platforms: linux/amd64,linux/arm64,linux/arm/v7
           push: true
-          tags: ghcr.io/iu2frl/mikrotik-telegram:${{ steps.get-latest-tag.outputs.tag }},ghcr.io/iu2frl/mikrotik-telegram:latest 
+          tags: ghcr.io/iu2frl/mikrotiklogsaggregator:${{ steps.get-latest-tag.outputs.tag }},ghcr.io/iu2frl/mikrotiklogsaggregator:latest 
