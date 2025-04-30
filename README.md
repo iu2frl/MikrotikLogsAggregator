@@ -77,6 +77,16 @@ docker run -d \
     mikrotiklogsaggregator
 ```
 
+or:
+
+```bash
+docker run -d \
+    --name mikrotik-telegram \
+    --env-file .env \
+    -p 10514:10514/udp \
+    ghcr.io/iu2frl/mikrotiklogsaggregator:latest
+```
+
 Where:
 
 - `--env-file .env`: Passes the environment variables from the .env file.
@@ -92,6 +102,21 @@ version: "3.8"
 services:
     mikrotik-telegram:
     image: mikrotiklogsaggregator
+    container_name: mikrotik-telegram
+    env_file: .env
+    ports:
+        - "10514:10514/udp"
+    restart: unless-stopped
+```
+
+or:
+
+```yaml
+version: "3.8"
+
+services:
+    mikrotik-telegram:
+    image: ghcr.io/iu2frl/mikrotiklogsaggregator:latest
     container_name: mikrotik-telegram
     env_file: .env
     ports:
