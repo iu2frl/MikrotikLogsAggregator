@@ -5,8 +5,24 @@ This project provides an interface to forward MikroTik logs to a Telegram bot an
 ## Features
 
 - Receive MikroTik logs via UDP and process them.
-- Interact with the MikroTik API to retrieve system health and status.
-- Telegram bot integration to handle commands like `/start`, `/help`, and `/status`.
+- Filter logs by severity (info, warning, error) before sending to Telegram.
+- Parse and format CEF-formatted log messages with the `LogLine` class.
+- Interact with the MikroTik API to retrieve system information:
+  - System health status
+  - System resources usage
+  - Network interfaces status
+  - DHCP server leases
+  - System logs
+- Telegram bot integration with multiple commands:
+  - `/start`: Welcome message
+  - `/help`: List available commands
+  - `/health`: Get MikroTik device health status
+  - `/resource`: Get system resource usage
+  - `/interface`: List network interfaces and their status
+  - `/dhcplease`: Show current DHCP server leases
+  - `/logs`: Display the last 10 system logs
+- Security through chat ID validation to prevent unauthorized access.
+- Graceful shutdown handling for both the bot and logs server.
 
 ## Setting up the Environment
 
@@ -16,10 +32,13 @@ To run this project, you need to set up the following environment variables. You
 TG_BOTTOKEN="xxxxxxxxxxxxxxxxxxxxxxxxxxx"  # Telegram bot token
 TG_CHATID="-00000000000"                   # Telegram chat ID
 MKT_API_ADDRESS="1.2.3.4"                  # MikroTik API address
-MKT_API_PORT=8729                          # MikroTik API port
+MKT_API_PORT=8729                          # MikroTik API port (defaults to 8729 if not specified)
 MKT_API_USER="someuser"                    # MikroTik API username
 MKT_API_PASS="somepass"                    # MikroTik API password
-MKT_LOGS_PORT=10514                        # UDP port for MikroTik logs
+MKT_LOGS_PORT=10514                        # UDP port for MikroTik logs (defaults to 10514 if not specified)
+CFG_SEND_ERROR=True                        # Send error logs to Telegram (True/False)
+CFG_SEND_WARNING=True                      # Send warning logs to Telegram (True/False)
+CFG_SEND_INFO=False                        # Send info logs to Telegram (True/False)
 ```
 
 ## Installation
@@ -37,7 +56,7 @@ cd MikrotikLogsAggregator
 pip install -r requirements.txt
 ```
 
-3. Create a `.env` file in the project directory and add the environment variables as shown above.
+3. Create a .env file in the project directory and add the environment variables as shown above.
 
 ## Running the Application
 
@@ -142,7 +161,11 @@ The Telegram bot supports the following commands:
 
 - `/start`: Sends a welcome message.
 - `/help`: Displays a list of available commands.
-- `/status`: Retrieves the status of the MikroTik device.
+- `/health`: Retrieves the health status of the MikroTik device.
+- `/resource`: Shows system resource usage information.
+- `/interface`: Lists all network interfaces and their status.
+- `/dhcplease`: Displays current DHCP server leases.
+- `/logs`: Shows the last 10 system logs.
 
 ## Configuring the Mikrotik device
 
@@ -159,6 +182,14 @@ add action=Docker topics=critical
 ```
 
 Make sure to replace the `remote` address with the address of the machine where the script (or the container) is running.
+
+## Log Filtering
+
+The application filters logs before sending them to Telegram based on severity level:
+
+- Error logs are always sent (can be configured with `CFG_SEND_ERROR`)
+- Warning logs are sent by default (can be configured with `CFG_SEND_WARNING`)
+- Info logs are not sent by default (can be configured with `CFG_SEND_INFO`)
 
 ## Logging
 
@@ -196,7 +227,10 @@ docker-compose down
 - Ensure that the .env file is correctly configured with valid values.
 - Check that the MikroTik device is configured to send logs to the correct IP and port.
 - Verify that the Telegram bot token and chat ID are correct.
+- If logs are not appearing in Telegram, check the log filtering configuration.
+- Ensure your MikroTik device has the API service enabled.
+- For SSL connection issues, verify that your MikroTik device supports SSL connections.
 
 ## License
 
-This project is licensed under the MIT License. See the `LICENSE` file for details.
+This project is licensed under the GNU GPL v3 License. See the `LICENSE` file for details.

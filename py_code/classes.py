@@ -1,6 +1,4 @@
 from datetime import datetime
-import sys, posix, time, binascii, socket, select, ssl
-import hashlib
 import re
 
 class LogLine:
