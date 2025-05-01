@@ -23,6 +23,7 @@ MKT_LOGS_PORT = 10514
 CFG_SEND_INFO = False
 CFG_SEND_WARNING = True
 CFG_SEND_ERROR = True
+CFG_SEND_CRITICAL = True
 
 # Project variables
 TG_APP: TelegramApplication = None
@@ -59,7 +60,7 @@ def load_env_variables():
     # Load environment variables
     global TG_BOTTOKEN, TG_CHATID, MKT_API_ADDRESS
     global MKT_API_PORT, MKT_API_USER, MKT_API_PASS, MKT_LOGS_PORT
-    global CFG_SEND_ERROR, CFG_SEND_WARNING, CFG_SEND_INFO
+    global CFG_SEND_ERROR, CFG_SEND_WARNING, CFG_SEND_INFO, CFG_SEND_CRITICAL
     
     TG_BOTTOKEN = os.getenv("TG_BOTTOKEN")
     TG_CHATID = os.getenv("TG_CHATID")
@@ -71,6 +72,7 @@ def load_env_variables():
     CFG_SEND_ERROR = os.getenv("CFG_SEND_ERROR", "True").lower() == "true"
     CFG_SEND_WARNING = os.getenv("CFG_SEND_WARNING", "True").lower() == "true"
     CFG_SEND_INFO = os.getenv("CFG_SEND_INFO", "False").lower() == "true"
+    CFG_SEND_CRITICAL = os.getenv("CFG_SEND_CRITICAL", "True").lower() == "true"
 
     # Validate environment variables
     if not TG_BOTTOKEN:
@@ -317,7 +319,9 @@ async def logs_to_telegram(log_line: LogLine) -> None:
 
     if log_line and log_line.message:
         try:
-            if "error" in log_line.topics and CFG_SEND_ERROR:
+            if "critical" in log_line.topics and CFG_SEND_CRITICAL:
+                content = f"{log_line.dvchost} CRITICAL: \n\n{log_line.message}"
+            elif "error" in log_line.topics and CFG_SEND_ERROR:
                 content = f"{log_line.dvchost} ERROR: \n\n{log_line.message}"
             elif "warning" in log_line.topics and CFG_SEND_WARNING:
                 content = f"{log_line.dvchost} WARNING: \n\n{log_line.message}"

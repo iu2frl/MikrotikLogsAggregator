@@ -39,6 +39,7 @@ MKT_LOGS_PORT=10514                        # UDP port for MikroTik logs (default
 CFG_SEND_ERROR=True                        # Send error logs to Telegram (True/False)
 CFG_SEND_WARNING=True                      # Send warning logs to Telegram (True/False)
 CFG_SEND_INFO=False                        # Send info logs to Telegram (True/False)
+CFG_SEND_CRITICAL=True                     # Send critical errors to Telegram (True/False)
 ```
 
 ## Installation
