@@ -76,27 +76,9 @@ python3 main.py
 
 You can both pull the pre-built images from `ghcr.io/iu2frl/mikrotiklogsaggregator:latest` or build your own image
 
-#### Build the Docker Image
-
-1. Build the Docker image locally:
-
-```bash
-docker build -t mikrotiklogsaggregator .
-```
-
 #### Run the Docker Container
 
 1. Run the container using `docker run`:
-
-```bash
-docker run -d \
-    --name mikrotik-telegram \
-    --env-file .env \
-    -p 10514:10514/udp \
-    mikrotiklogsaggregator
-```
-
-or:
 
 ```bash
 docker run -d \
@@ -116,31 +98,26 @@ Where:
 1. Create a `docker-compose.yml` file with the following content:
 
 ```yaml
-version: "3.8"
-
 services:
     mikrotik-telegram:
-    image: mikrotiklogsaggregator
-    container_name: mikrotik-telegram
-    env_file: .env
-    ports:
-        - "10514:10514/udp"
-    restart: unless-stopped
-```
-
-or:
-
-```yaml
-version: "3.8"
-
-services:
-    mikrotik-telegram:
-    image: ghcr.io/iu2frl/mikrotiklogsaggregator:latest
-    container_name: mikrotik-telegram
-    env_file: .env
-    ports:
-        - "10514:10514/udp"
-    restart: unless-stopped
+      image: ghcr.io/iu2frl/mikrotiklogsaggregator:latest
+      container_name: mikrotik-telegram
+      environment:
+        - "TG_BOTTOKEN=xxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+        - "TG_CHATID=xxxxxxxxxxxxx"
+        - "MKT_API_ADDRESS=192.168.0.1"
+        #- "MKT_API_PORT=0"
+        - "MKT_API_USER=xxxxxxx"
+        - "MKT_API_PASS=xxxxxxx"
+        - "MKT_LOGS_PORT=10514"
+      ports:
+          - 10514:10514/udp
+      restart: unless-stopped
+      deploy:
+            resources:
+              limits:
+                cpus: '0.5'
+                memory: 128M
 ```
 
 2. Start the container using Docker Compose:
@@ -233,4 +210,4 @@ docker-compose down
 
 ## License
 
-This project is licensed under the GNU GPL v3 License. See the `LICENSE` file for details.
+This project is licensed under the GNU GPL v2 License. See the `LICENSE` file for details.
